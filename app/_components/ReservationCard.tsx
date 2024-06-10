@@ -2,13 +2,14 @@ import { PencilSquareIcon } from '@heroicons/react/24/solid';
 import { format, formatDistance, isPast, isToday, parseISO } from 'date-fns';
 import DeleteReservation from './DeleteReservation';
 import Image from 'next/image';
+import { TBooking, TGetBooking } from '../_lib/data-service.types';
 
 export const formatDistanceFromNow = (dateStr: string) =>
     formatDistance(parseISO(dateStr), new Date(), {
         addSuffix: true,
     }).replace('about ', '');
 
-function ReservationCard({ booking }) {
+function ReservationCard({ booking }: { booking: TGetBooking }) {
     const {
         id,
         guestId,
