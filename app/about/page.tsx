@@ -1,16 +1,22 @@
 import Image from 'next/image';
 import image1 from '@/public/about-1.jpg';
 import image2 from '@/public/about-2.jpg';
+import { getCabins } from '../_lib/data-service';
+
+//Revalidate every 24 hours;
+export const revalidate = 86400;
 
 export const metadata = {
     title: 'About',
 };
 
-export default function Page() {
+export default async function Page() {
+    const cabins = await getCabins();
+
     return (
         <div className="grid grid-cols-5 items-center gap-x-24 gap-y-32 text-lg">
             <div className="col-span-3">
-                <h1 className="text-accent-400 mb-10 text-4xl font-medium">
+                <h1 className="mb-10 text-4xl font-medium text-accent-400">
                     Welcome to The Wild Oasis
                 </h1>
 
@@ -24,11 +30,11 @@ export default function Page() {
                         enjoying simple pleasures with family.
                     </p>
                     <p>
-                        Our 8 luxury cabins provide a cozy base, but the real
-                        freedom and peace you&apos;ll find in the surrounding
-                        mountains. Wander through lush forests, breathe in the
-                        fresh air, and watch the stars twinkle above from the
-                        warmth of a campfire or your hot tub.
+                        Our {cabins.length} luxury cabins provide a cozy base,
+                        but the real freedom and peace you&apos;ll find in the
+                        surrounding mountains. Wander through lush forests,
+                        breathe in the fresh air, and watch the stars twinkle
+                        above from the warmth of a campfire or your hot tub.
                     </p>
                     <p>
                         This is where memorable moments are made, surrounded by
@@ -58,7 +64,7 @@ export default function Page() {
             </div>
 
             <div className="col-span-3">
-                <h1 className="text-accent-400 mb-10 text-4xl font-medium">
+                <h1 className="mb-10 text-4xl font-medium text-accent-400">
                     Managed by our family since 1962
                 </h1>
 
@@ -83,7 +89,7 @@ export default function Page() {
                     <div>
                         <a
                             href="/cabins"
-                            className="bg-accent-500 text-primary-800 hover:bg-accent-600 mt-4 inline-block px-8 py-5 text-lg font-semibold transition-all"
+                            className="mt-4 inline-block bg-accent-500 px-8 py-5 text-lg font-semibold text-primary-800 transition-all hover:bg-accent-600"
                         >
                             Explore our luxury cabins
                         </a>

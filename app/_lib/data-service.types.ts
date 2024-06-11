@@ -60,6 +60,9 @@ export const guestSchema = z.object({
     countryFlag: z.string().nullable(),
 });
 
+const newGuestSchema = guestSchema.omit({ id: true });
+export type TNewGuest = z.infer<typeof newGuestSchema>;
+
 //Bookings
 export const bookingSchema = z.object({
     id: z.number(),
@@ -130,6 +133,8 @@ const getStaysTodayActivitySchema = z.array(
     })
 );
 
+const newBookingSchema = bookingSchema.omit({ id: true, status: true });
+
 export type TBooking = z.infer<typeof bookingSchema>;
 export type TGetBookings = z.infer<typeof getBookingsSchema>;
 export type TGetBooking = z.infer<typeof getBookingsSchema>[number];
@@ -149,3 +154,14 @@ export interface FilterAndSort {
     };
     page: number;
 }
+export type TNewBooking = z.infer<typeof newBookingSchema>;
+
+// Country
+export const countrySchema = z.object({
+    name: z.string(),
+    flag: z.string(),
+    iso2: z.string(),
+    iso3: z.string(),
+});
+export const getCountriesSchema = z.array(countrySchema);
+export type TCountry = z.infer<typeof countrySchema>;

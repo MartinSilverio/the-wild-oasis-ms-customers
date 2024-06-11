@@ -1,7 +1,10 @@
+// import { unstable_noStore as noStore } from 'next/cache';
 import { getCabins } from '../_lib/data-service';
 import CabinCard from './CabinCard';
 
 async function CabinList() {
+    //For when Partial Pre-rendering gets implemented in Next
+    // noStore();
     const cabins = await getCabins();
 
     if (!cabins.length) return null;

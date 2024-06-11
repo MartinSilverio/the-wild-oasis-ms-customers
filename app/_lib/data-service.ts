@@ -1,8 +1,12 @@
 import {
+    TNewBooking,
+    TNewGuest,
     bookingSchema,
     cabinArraySchema,
     cabinSchema,
+    countrySchema,
     getBookingsSchema,
+    getCountriesSchema,
     guestSchema,
 } from './data-service.types';
 import { eachDayOfInterval } from 'date-fns';
@@ -158,7 +162,7 @@ export async function getCountries() {
             'https://countriesnow.space/api/v0.1/countries/flag/images'
         );
         const countries = await res.json();
-        return countries.data;
+        return getCountriesSchema.parse(countries.data);
     } catch {
         throw new Error('Could not fetch countries');
     }
@@ -167,7 +171,7 @@ export async function getCountries() {
 /////////////
 // CREATE
 
-export async function createGuest(newGuest) {
+export async function createGuest(newGuest: TNewGuest) {
     const { data, error } = await supabase.from('guests').insert([newGuest]);
 
     if (error) {
@@ -178,7 +182,7 @@ export async function createGuest(newGuest) {
     return data;
 }
 
-export async function createBooking(newBooking) {
+export async function createBooking(newBooking: TNewBooking) {
     const { data, error } = await supabase
         .from('bookings')
         .insert([newBooking])
@@ -198,7 +202,7 @@ export async function createBooking(newBooking) {
 // UPDATE
 
 // The updatedFields is an object which should ONLY contain the updated data
-export async function updateGuest(id, updatedFields) {
+export async function updateGuest(id: string, updatedFields: string) {
     const { data, error } = await supabase
         .from('guests')
         .update(updatedFields)
@@ -213,7 +217,7 @@ export async function updateGuest(id, updatedFields) {
     return data;
 }
 
-export async function updateBooking(id, updatedFields) {
+export async function updateBooking(id: string, updatedFields: string) {
     const { data, error } = await supabase
         .from('bookings')
         .update(updatedFields)
@@ -231,7 +235,7 @@ export async function updateBooking(id, updatedFields) {
 /////////////
 // DELETE
 
-export async function deleteBooking(id) {
+export async function deleteBooking(id: string) {
     const { data, error } = await supabase
         .from('bookings')
         .delete()

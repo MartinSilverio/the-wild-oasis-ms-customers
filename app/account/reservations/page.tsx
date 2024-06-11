@@ -6,7 +6,7 @@ export const metadata = {
 
 function page() {
     // CHANGE
-    const bookings = [];
+    // const bookings = [];
 
     return (
         <div>
@@ -14,7 +14,7 @@ function page() {
                 Your reservations
             </h2>
 
-            {bookings.length === 0 ? (
+            {/* {bookings.length === 0 ? (
                 <p className="text-lg">
                     You have no reservations yet. Check out our{' '}
                     <a className="text-accent-500 underline" href="/cabins">
@@ -27,7 +27,7 @@ function page() {
                         <ReservationCard booking={booking} key={booking.id} />
                     ))}
                 </ul>
-            )}
+            )} */}
         </div>
     );
 }

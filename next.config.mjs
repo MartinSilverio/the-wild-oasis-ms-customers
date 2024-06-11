@@ -10,6 +10,8 @@ const nextConfig = {
             },
         ],
     },
+    //For whole site SSG, but will need to implement on image loader (ex. Cloudinary)
+    // output: 'export',
 };
 
 export default nextConfig;
