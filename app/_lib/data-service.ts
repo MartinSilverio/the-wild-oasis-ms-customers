@@ -5,9 +5,11 @@ import {
     cabinArraySchema,
     cabinSchema,
     countrySchema,
+    getBookedDatesSchema,
     getBookingsSchema,
     getCountriesSchema,
     guestSchema,
+    settingSchema,
 } from './data-service.types';
 import { eachDayOfInterval } from 'date-fns';
 import { supabase } from './supabase';
@@ -110,7 +112,7 @@ export async function getBookings(guestId: number) {
     return getBookingsSchema.parse(data);
 }
 
-export async function getBookedDatesByCabinId(cabinId: number) {
+export async function getBookedDatesByCabinId(cabinId: number | string) {
     let today: Date | string = new Date();
     today.setUTCHours(0, 0, 0, 0);
     today = today.toISOString();
@@ -137,8 +139,7 @@ export async function getBookedDatesByCabinId(cabinId: number) {
         })
         .flat();
 
-    //TODO Figure out format
-    return bookedDates;
+    return getBookedDatesSchema.parse(bookedDates);
 }
 
 export async function getSettings() {
@@ -147,12 +148,15 @@ export async function getSettings() {
         .select('*')
         .single();
 
+    // For testing
+    // await new Promise((res) => setTimeout(res, 2000));
+
     if (error) {
         console.error(error);
         throw new Error('Settings could not be loaded');
     }
 
-    return data;
+    return settingSchema.parse(data);
 }
 
 export async function getCountries() {

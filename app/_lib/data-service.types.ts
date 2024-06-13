@@ -117,6 +117,9 @@ const getBookingsAfterDateSchema = z.array(
         totalPrice: true,
     })
 );
+
+export const getBookedDatesSchema = z.array(z.string().datetime());
+
 const getStaysAfterDateSchema = z.array(
     bookingSchema.extend({
         guests: guestSchema.pick({ fullName: true }),
@@ -155,6 +158,7 @@ export interface FilterAndSort {
     page: number;
 }
 export type TNewBooking = z.infer<typeof newBookingSchema>;
+export type TGetBookedDates = z.infer<typeof getBookedDatesSchema>;
 
 // Country
 export const countrySchema = z.object({
@@ -165,3 +169,15 @@ export const countrySchema = z.object({
 });
 export const getCountriesSchema = z.array(countrySchema);
 export type TCountry = z.infer<typeof countrySchema>;
+
+//Setting
+export const settingSchema = z.object({
+    id: z.number(),
+    created_at: z.string(),
+    minBookingLength: z.number(),
+    maxBookingLength: z.number(),
+    maxGuestsPerBooking: z.number(),
+    breakfastPrice: z.number(),
+});
+
+export type TSettings = z.infer<typeof settingSchema>;
