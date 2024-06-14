@@ -1,12 +1,15 @@
+import { auth } from '../_lib/auth';
 import { getBookedDatesByCabinId, getSettings } from '../_lib/data-service';
 import { TCabin } from '../_lib/data-service.types';
 import DateSelector from './DateSelector';
+import LoginMessage from './LoginMessage';
 import ReservationForm from './ReservationForm';
 
 async function Reservation({ cabin }: { cabin: TCabin }) {
-    const [settings, bookedDates] = await Promise.all([
+    const [settings, bookedDates, session] = await Promise.all([
         getSettings(),
         getBookedDatesByCabinId(cabin.id),
+        auth(),
     ]);
 
     console.log(bookedDates);
@@ -18,7 +21,11 @@ async function Reservation({ cabin }: { cabin: TCabin }) {
                 settings={settings}
                 bookedDates={bookedDates}
             />
-            <ReservationForm cabin={cabin} />
+            {session?.user ? (
+                <ReservationForm cabin={cabin} user={session.user} />
+            ) : (
+                <LoginMessage />
+            )}
         </div>
     );
 }
