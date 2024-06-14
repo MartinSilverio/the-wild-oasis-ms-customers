@@ -12,8 +12,6 @@ async function Reservation({ cabin }: { cabin: TCabin }) {
         auth(),
     ]);
 
-    console.log(bookedDates);
-
     return (
         <div className="grid min-h-[400px] grid-cols-2 border border-primary-800">
             <DateSelector

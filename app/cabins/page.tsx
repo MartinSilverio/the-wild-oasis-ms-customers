@@ -19,8 +19,6 @@ export default function Page({
         capacity?: string;
     };
 }) {
-    console.log(searchParams);
-
     const filter = searchParams.capacity ?? 'all';
 
     return (

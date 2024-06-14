@@ -38,7 +38,9 @@ function useReservation() {
     const context = useContext(ReservationContext);
 
     if (context === undefined) {
-        throw new Error('useReservation must be used inside Counter Context');
+        throw new Error(
+            'useReservation must be used inside Reservation Context'
+        );
     }
 
     return context;
