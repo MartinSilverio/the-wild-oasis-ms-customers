@@ -55,12 +55,18 @@ export const guestSchema = z.object({
     created_at: z.string(),
     fullName: z.string(),
     email: z.string(),
-    nationalID: z.string(),
-    nationality: z.string(),
+    nationalID: z.string().nullable(),
+    nationality: z.string().nullable(),
     countryFlag: z.string().nullable(),
 });
 
-const newGuestSchema = guestSchema.omit({ id: true });
+const newGuestSchema = guestSchema
+    .omit({ id: true, created_at: true })
+    .partial({
+        nationalID: true,
+        nationality: true,
+        countryFlag: true,
+    });
 export type TNewGuest = z.infer<typeof newGuestSchema>;
 
 //Bookings

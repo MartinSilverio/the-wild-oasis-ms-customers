@@ -68,7 +68,7 @@ export const getCabins = async function () {
 };
 
 // Guests are uniquely identified by their email address
-export async function getGuest(email: string) {
+export async function getGuest(email: string | undefined | null) {
     const { data, error } = await supabase
         .from('guests')
         .select('*')
@@ -76,7 +76,7 @@ export async function getGuest(email: string) {
         .single();
 
     // No error here! We handle the possibility of no guest in the sign in callback
-    return guestSchema.parse(data);
+    return guestSchema.nullable().parse(data);
 }
 
 export async function getBooking(id: number) {
