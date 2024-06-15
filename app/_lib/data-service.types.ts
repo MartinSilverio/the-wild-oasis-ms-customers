@@ -101,7 +101,6 @@ export const getBookingsSchema = z.array(
             endDate: true,
             numGuests: true,
             numNights: true,
-            status: true,
             totalPrice: true,
             cabinId: true,
             guestId: true,

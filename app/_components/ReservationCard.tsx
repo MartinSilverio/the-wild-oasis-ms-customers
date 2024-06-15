@@ -1,8 +1,9 @@
 import { PencilSquareIcon } from '@heroicons/react/24/solid';
 import { format, formatDistance, isPast, isToday, parseISO } from 'date-fns';
-import DeleteReservation from './DeleteReservation';
 import Image from 'next/image';
-import { TBooking, TGetBooking } from '../_lib/data-service.types';
+import { TGetBooking } from '../_lib/data-service.types';
+import DeleteReservation from './DeleteReservation';
+import Link from 'next/link';
 
 export const formatDistanceFromNow = (dateStr: string) =>
     formatDistance(parseISO(dateStr), new Date(), {
@@ -12,13 +13,11 @@ export const formatDistanceFromNow = (dateStr: string) =>
 function ReservationCard({ booking }: { booking: TGetBooking }) {
     const {
         id,
-        guestId,
         startDate,
         endDate,
         numNights,
         totalPrice,
         numGuests,
-        status,
         created_at,
         cabins: { name, image },
     } = booking;
@@ -29,6 +28,7 @@ function ReservationCard({ booking }: { booking: TGetBooking }) {
                 <Image
                     src={image}
                     alt={`Cabin ${name}`}
+                    fill
                     className="border-r border-primary-800 object-cover"
                 />
             </div>
@@ -73,14 +73,18 @@ function ReservationCard({ booking }: { booking: TGetBooking }) {
             </div>
 
             <div className="flex w-[100px] flex-col border-l border-primary-800">
-                <a
-                    href={`/account/reservations/edit/${id}`}
-                    className="group flex flex-grow items-center gap-2 border-b border-primary-800 px-3 text-xs font-bold uppercase text-primary-300 transition-colors hover:bg-accent-600 hover:text-primary-900"
-                >
-                    <PencilSquareIcon className="h-5 w-5 text-primary-600 transition-colors group-hover:text-primary-800" />
-                    <span className="mt-1">Edit</span>
-                </a>
-                <DeleteReservation bookingId={id} />
+                {!isPast(startDate) && (
+                    <>
+                        <Link
+                            href={`/account/reservations/edit/${id}`}
+                            className="group flex flex-grow items-center gap-2 border-b border-primary-800 px-3 text-xs font-bold uppercase text-primary-300 transition-colors hover:bg-accent-600 hover:text-primary-900"
+                        >
+                            <PencilSquareIcon className="h-5 w-5 text-primary-600 transition-colors group-hover:text-primary-800" />
+                            <span className="mt-1">Edit</span>
+                        </Link>
+                        <DeleteReservation bookingId={id} />
+                    </>
+                )}
             </div>
         </div>
     );
