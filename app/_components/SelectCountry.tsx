@@ -3,7 +3,7 @@ import { getCountries } from '@/app/_lib/data-service';
 // Let's imagine your colleague already built this component 😃
 
 type TSelectCountryProps = {
-    defaultCountry: string;
+    defaultCountry: string | undefined | null;
     name: string;
     id: string;
     className: string;

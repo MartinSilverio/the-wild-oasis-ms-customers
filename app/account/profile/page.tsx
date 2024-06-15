@@ -1,13 +1,17 @@
 import SelectCountry from '@/app/_components/SelectCountry';
 import UpdateProfileForm from '@/app/_components/UpdateProfileForm';
+import { auth } from '@/app/_lib/auth';
+import { getGuest } from '@/app/_lib/data-service';
 
 export const metadata = {
     title: 'Update profile',
 };
 
-function page() {
-    // CHANGE
-    const nationality = 'portugal';
+async function page() {
+    const session = await auth();
+    const guest = await getGuest(session?.user.email);
+
+    if (!guest) throw new Error('Missing guest information');
 
     return (
         <div>
@@ -20,12 +24,12 @@ function page() {
                 process faster and smoother. See you soon!
             </p>
 
-            <UpdateProfileForm>
+            <UpdateProfileForm guest={guest}>
                 <SelectCountry
                     name="nationality"
                     id="nationality"
                     className="w-full rounded-sm bg-primary-200 px-5 py-3 text-primary-800 shadow-sm"
-                    defaultCountry={nationality}
+                    defaultCountry={guest.nationality}
                 />
             </UpdateProfileForm>
         </div>
