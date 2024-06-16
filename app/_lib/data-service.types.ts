@@ -123,7 +123,7 @@ const getBookingsAfterDateSchema = z.array(
     })
 );
 
-export const getBookedDatesSchema = z.array(z.string().datetime());
+export const getBookedDatesSchema = z.array(z.date());
 
 const getStaysAfterDateSchema = z.array(
     bookingSchema.extend({
@@ -141,7 +141,9 @@ const getStaysTodayActivitySchema = z.array(
     })
 );
 
-const newBookingSchema = bookingSchema.omit({ id: true, status: true });
+const newBookingSchema = bookingSchema
+    .omit({ id: true, created_at: true })
+    .extend({ startDate: z.date(), endDate: z.date() });
 
 export type TBooking = z.infer<typeof bookingSchema>;
 export type TGetBookings = z.infer<typeof getBookingsSchema>;

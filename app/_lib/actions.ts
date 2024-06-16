@@ -6,6 +6,7 @@ import { supabase } from './supabase';
 import { revalidatePath } from 'next/cache';
 import { getBooking, getBookings } from './data-service';
 import { redirect } from 'next/navigation';
+import { TNewBooking } from './data-service.types';
 
 // The formData is an object which should ONLY contain the updated data
 export async function updateProfile(formData: FormData) {
@@ -51,7 +52,7 @@ export async function updateProfile(formData: FormData) {
     }
 }
 
-export async function deleteReservation(bookingId: number) {
+export async function deleteBooking(bookingId: number) {
     const session = await auth();
 
     //Common practice to not use try catch for server action, but to throw, as it will be caught by an error boundary
@@ -76,19 +77,19 @@ export async function deleteReservation(bookingId: number) {
     revalidatePath('/account/reservations');
 }
 
-const updateReservationSchema = z.object({
+const updateBookingSchema = z.object({
     reservationId: z.coerce.number(),
     numGuests: z.coerce.number(),
     observations: z.string().optional(),
 });
 
-export async function updateReservation(formData: FormData) {
+export async function updateBooking(formData: FormData) {
     const session = await auth();
 
     if (!session) throw new Error('You must be logged in');
 
     //Validate fields exist
-    const validatedFields = updateReservationSchema.safeParse({
+    const validatedFields = updateBookingSchema.safeParse({
         reservationId: formData.get('reservationId'),
         numGuests: formData.get('numGuests'),
         observations: formData.get('observations'),
@@ -125,6 +126,60 @@ export async function updateReservation(formData: FormData) {
 
     //Redirect
     redirect('/account/reservations');
+}
+
+const createBookingSchema = z.object({
+    numGuests: z.coerce.number(),
+    observations: z.string().optional(),
+});
+
+export async function createBooking(
+    bookingData: {
+        startDate: Date | undefined;
+        endDate: Date | undefined;
+        numNights: number;
+        cabinPrice: number;
+        cabinId: number;
+    },
+    formData: FormData
+) {
+    const session = await auth();
+
+    if (!session) throw new Error('You must be logged in');
+    if (!bookingData.startDate || !bookingData.endDate)
+        throw new Error('Missing dates, please try again');
+
+    //Validate fields exist
+    const validatedFields = createBookingSchema.parse({
+        numGuests: formData.get('numGuests'),
+        observations: formData.get('observations'),
+    });
+
+    const { numGuests, observations = null } = validatedFields;
+
+    const newBooking: TNewBooking = {
+        ...bookingData,
+        startDate: bookingData.startDate, //Typescript needs this explicitly stated to get type guard
+        endDate: bookingData.endDate,
+        guestId: session.user.guestId,
+        observations: observations ? observations.slice(0, 1000) : null,
+        numGuests,
+        extrasPrice: 0,
+        totalPrice: bookingData.cabinPrice,
+        isPaid: false,
+        hasBreakfast: false,
+        status: 'unconfirmed',
+    };
+
+    const { error } = await supabase.from('bookings').insert([newBooking]);
+
+    if (error) {
+        console.error(error);
+        throw new Error('Booking could not be created');
+    }
+
+    revalidatePath(`/cabins/${bookingData.cabinId}`);
+    redirect('/cabins/thankyou');
 }
 
 export async function signInAction() {

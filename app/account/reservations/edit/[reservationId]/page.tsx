@@ -1,5 +1,5 @@
 import SubmitButton from '@/app/_components/SubmitButton';
-import { updateReservation } from '@/app/_lib/actions';
+import { updateBooking } from '@/app/_lib/actions';
 import { getBooking, getCabin } from '@/app/_lib/data-service';
 
 async function page({ params }: { params: { reservationId: string } }) {
@@ -16,7 +16,7 @@ async function page({ params }: { params: { reservationId: string } }) {
 
             <form
                 className="flex flex-col gap-6 bg-primary-900 px-12 py-8 text-lg"
-                action={updateReservation}
+                action={updateBooking}
             >
                 <div className="space-y-2">
                     <input
