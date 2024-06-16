@@ -4,7 +4,8 @@ import { z } from 'zod';
 import { auth, signIn, signOut } from './auth';
 import { supabase } from './supabase';
 import { revalidatePath } from 'next/cache';
-import { getBookings } from './data-service';
+import { getBooking, getBookings } from './data-service';
+import { redirect } from 'next/navigation';
 
 // The formData is an object which should ONLY contain the updated data
 export async function updateProfile(formData: FormData) {
@@ -13,8 +14,6 @@ export async function updateProfile(formData: FormData) {
     //Common practice to not use try catch for server action, but to throw, as it will be caught by an error boundary
     //Check if user is authenticated
     if (!session) throw new Error('You must be logged in');
-
-    console.log(formData);
 
     try {
         const nationalID = z
@@ -30,8 +29,6 @@ export async function updateProfile(formData: FormData) {
         const [nationality, countryFlag] = nationalityFormData.split('%');
 
         const updateData = { nationality, countryFlag, nationalID };
-
-        console.log({ updateData });
 
         const { error } = await supabase
             .from('guests')
@@ -77,6 +74,57 @@ export async function deleteReservation(bookingId: number) {
         throw new Error('Booking could not be deleted');
     }
     revalidatePath('/account/reservations');
+}
+
+const updateReservationSchema = z.object({
+    reservationId: z.coerce.number(),
+    numGuests: z.coerce.number(),
+    observations: z.string().optional(),
+});
+
+export async function updateReservation(formData: FormData) {
+    const session = await auth();
+
+    if (!session) throw new Error('You must be logged in');
+
+    //Validate fields exist
+    const validatedFields = updateReservationSchema.safeParse({
+        reservationId: formData.get('reservationId'),
+        numGuests: formData.get('numGuests'),
+        observations: formData.get('observations'),
+    });
+
+    if (!validatedFields.success) {
+        throw new Error('Missing required fields');
+    }
+    const { reservationId, numGuests, observations } = validatedFields.data;
+
+    //Check if booking belong to the user
+    const guestBookings = await getBookings(session.user.guestId);
+    const guestBookingIds = guestBookings.map((booking) => booking.id);
+
+    if (!guestBookingIds.includes(reservationId))
+        throw new Error('You are not allowed to delete this booking');
+
+    // Update data
+    const { error } = await supabase
+        .from('bookings')
+        .update({ numGuests, observations: observations?.slice(0, 1000) })
+        .eq('id', reservationId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error(error);
+        throw new Error('Reservation could not be updated');
+    }
+
+    //Revalidate path
+    revalidatePath('/account/reservations');
+    revalidatePath(`/account/reservations/edit/${reservationId}`);
+
+    //Redirect
+    redirect('/account/reservations');
 }
 
 export async function signInAction() {

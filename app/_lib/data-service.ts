@@ -79,7 +79,7 @@ export async function getGuest(email: string | undefined | null) {
     return guestSchema.nullable().parse(data);
 }
 
-export async function getBooking(id: number) {
+export async function getBooking(id: number | string) {
     const { data, error, count } = await supabase
         .from('bookings')
         .select('*')
@@ -201,23 +201,3 @@ export async function createBooking(newBooking: TNewBooking) {
 
     return data;
 }
-
-/////////////
-// UPDATE
-
-export async function updateBooking(id: string, updatedFields: string) {
-    const { data, error } = await supabase
-        .from('bookings')
-        .update(updatedFields)
-        .eq('id', id)
-        .select()
-        .single();
-
-    if (error) {
-        console.error(error);
-        throw new Error('Booking could not be updated');
-    }
-    return data;
-}
-
-/////////////
