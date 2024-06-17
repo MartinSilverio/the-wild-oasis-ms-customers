@@ -2,6 +2,6 @@
 
 Customer-facing counterpart to the Wild Oasis employee app, this allows customers to register through Google login, and then reserve cabins.
 
-This is purely a mock website, built using Next with Supabase backend.
+This is purely a demo website, built using Next with Supabase backend.
 
-[Link](https://nextjs.org/docs)
+[Link](https://the-wild-oasis-ms-customers.vercel.app/)
